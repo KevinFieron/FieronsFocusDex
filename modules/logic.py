@@ -78,3 +78,43 @@ def transfer_pokemon(name):
     data["candy"][name] = data["candy"].get(name, 0) + 1
     save_user_data(data)
     return True
+
+def level_up_pokemon(pokemon_name, pokemon_index):
+    data = load_user_data()
+    pokemon_list = data.get("pokemon", [])
+    candy_data = data.get("candy", {})
+
+    if pokemon_index >= len(pokemon_list):
+        return False, "Invalid index"
+
+    pokemon = pokemon_list[pokemon_index]
+
+    if pokemon["name"] != pokemon_name:
+        return False, "Pokémon mismatch"
+
+    level = pokemon.get("level", 1)
+    if level >= 100:
+        return False, "Already at max level"
+
+    # Bestem candy-kostnad basert på level
+    if level < 20:
+        cost = 1
+    elif level < 40:
+        cost = 2
+    elif level < 60:
+        cost = 3
+    elif level < 80:
+        cost = 4
+    else:
+        cost = 5
+
+    current_candy = candy_data.get(pokemon_name, 0)
+    if current_candy < cost:
+        return False, f"Not enough {pokemon_name} candy (need {cost})"
+
+    # Oppdater data
+    pokemon["level"] += 1
+    candy_data[pokemon_name] -= cost
+
+    save_user_data(data)
+    return True, f"{pokemon_name} is now level {pokemon['level']}!"

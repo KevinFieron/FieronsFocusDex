@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from modules.logic import log_task_and_get_pokemon, load_user_data, transfer_pokemon
+from modules.logic import log_task_and_get_pokemon, load_user_data, transfer_pokemon, level_up_pokemon
 from modules.logic import save_user_data, DATA_PATH
 
 class FocusDexApp:
@@ -11,6 +11,7 @@ class FocusDexApp:
 
         self.create_main_menu()
         self.active_window = None
+        self.pokemon_window = None
 
     def close_active_window(self):
         if self.active_window and self.active_window.winfo_exists():
@@ -18,9 +19,17 @@ class FocusDexApp:
             self.active_window = None
 
     def set_window_closed(self, window):
+        if window and window.winfo_exists():
+            window.destroy()
         if self.active_window == window:
             self.active_window = None
-        window.destroy()
+        if self.pokemon_window == window:
+            self.pokemon_window = None
+
+    def refresh_pokemon_menu(self):
+        if self.pokemon_window and self.pokemon_window.winfo_exists():
+            self.pokemon_window.destroy()
+        self.open_pokemon_menu()
 
     def create_main_menu(self):
         title = tk.Label(self.root, text="FocusDex Menu", font=("Helvetica", 16, "bold"))
@@ -139,23 +148,61 @@ class FocusDexApp:
         candy_data = data.get("candy", {})
 
         self.close_active_window()
-
         candy_window = tk.Toplevel(self.root)
         self.active_window = candy_window
         candy_window.protocol("WM_DELETE_WINDOW", lambda: self.set_window_closed(candy_window))
 
-        candy_window.title("Candy stack")
+        candy_window.title("Candy Storage")
         candy_window.geometry("300x400")
 
-        label = tk.Label(candy_window, text="Your Pokémon-candies", font=("Helvetica", 12))
+        label = tk.Label(candy_window, text="Your Pokémon Candies", font=("Helvetica", 12))
         label.pack(pady=10)
 
         if not candy_data:
-            tk.Label(candy_window, text="No candies yet!").pack()
+            tk.Label(candy_window, text="No candy yet!").pack()
         else:
             for name, count in candy_data.items():
+                frame = tk.Frame(candy_window)
+                frame.pack(pady=2, fill="x")
+
                 text = f"{name}: {count} candy"
-                tk.Label(candy_window, text=text, anchor="w").pack(pady=2)    
+                tk.Label(frame, text=text, anchor="w").pack(side="left", padx=5)
+
+                def create_level_up_handler(poke_name):
+                    return lambda: self.open_level_up_menu(poke_name)
+
+                level_up_btn = tk.Button(frame, text="Use", command=create_level_up_handler(name))
+                level_up_btn.pack(side="right", padx=5)
+
+    def open_level_up_menu(self, name):
+        data = load_user_data()
+        matching_pokemon = [(i, p) for i, p in enumerate(data.get("pokemon", [])) if p["name"] == name]
+
+        if not matching_pokemon:
+            messagebox.showinfo("No Pokémon", f"You have no {name} Pokémon.")
+            return
+
+        level_window = tk.Toplevel(self.root)
+        level_window.title(f"Level up {name}")
+        level_window.geometry("300x300")
+
+        tk.Label(level_window, text=f"Select a {name} to level up:", font=("Helvetica", 12)).pack(pady=10)
+
+        for idx, poke in matching_pokemon:
+            lvl = poke.get("level", 1)
+            text = f"{name} Lv {lvl}"
+            def create_level_up_fn(i=idx):
+                def level_up_action():
+                    success, msg = level_up_pokemon(name, i)
+                    messagebox.showinfo("Level Up", msg)
+                    if success:
+                        level_window.destroy()
+                        self.open_candy_menu()
+                        self.refresh_pokemon_menu()
+                return level_up_action
+
+            btn = tk.Button(level_window, text=text, command=create_level_up_fn())
+            btn.pack(pady=3)
 
     def open_pokemon_detail(self, name):
         detail_window = tk.Toplevel(self.root)
@@ -231,7 +278,6 @@ class FocusDexApp:
                 poke_box.grid(row=row, column=col, padx=5, pady=5)
 
     def refresh_pokemon_grid(self):
-        # Fjern eksisterende widgets
         for widget in self.poke_scroll_frame.winfo_children():
             widget.destroy()
 
@@ -245,12 +291,15 @@ class FocusDexApp:
             def on_click(poke_name):
                 self.open_pokemon_detail(poke_name)
 
-            for i, name in enumerate(pokemon_list):
+            for i, poke in enumerate(pokemon_list):
+                name = poke["name"]
+                level = poke.get("level", 1)
+                display_text = f"{name} Lv {level}"
                 row = i // 3
                 col = i % 3
                 poke_box = tk.Button(
                     self.poke_scroll_frame,
-                    text=name,
+                    text=display_text,
                     relief="groove",
                     width=12,
                     height=3,
