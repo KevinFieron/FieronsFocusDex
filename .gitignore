@@ -1,0 +1,16 @@
+# Python bytecode
+__pycache__/
+*.pyc
+
+# VS Code settings
+.vscode/
+
+# Virtuelt miljø
+.venv/
+
+# Brukerdata og lokal lagring
+data/user_data.json
+
+# OS-spesifikke filer
+.DS_Store
+Thumbs.db
