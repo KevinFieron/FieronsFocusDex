@@ -217,10 +217,23 @@ class FocusDexApp:
 
         detail_window = tk.Toplevel(self.root)
         detail_window.title(pokemon["name"])
-        detail_window.geometry("300x180")
+        detail_window.geometry("300x300")
 
         label = tk.Label(detail_window, text=f"{pokemon['name']} Lv {pokemon['level']}", font=("Helvetica", 14))
         label.pack(pady=5)
+
+        ivs = pokemon.get("iv", {})
+        stats = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]
+        total = sum(ivs.get(stat, 0) for stat in stats)
+
+        table = tk.Frame(detail_window)
+        table.pack(pady=5)
+        for i, stat in enumerate(stats):
+            tk.Label(table, text=stat, width=10, anchor="w").grid(row=i, column=0)
+            tk.Label(table, text=str(ivs.get(stat, 0)), width=10, anchor="e").grid(row=i, column=1)
+
+        tk.Label(table, text="Total", width=10, anchor="w", font=("Helvetica", 10, "bold")).grid(row=6, column=0)
+        tk.Label(table, text=f"{total} / 186", width=10, anchor="e", font=("Helvetica", 10, "bold")).grid(row=6, column=1)
 
         nature = pokemon.get("nature", "Unknown")
         tk.Label(detail_window, text=f"Nature: {nature}", font=("Helvetica", 10)).pack(pady=2)

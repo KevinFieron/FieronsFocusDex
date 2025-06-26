@@ -46,11 +46,21 @@ def log_task_and_get_pokemon(activity):
 
     now = datetime.now()
 
+    iv = {
+    "HP": random.randint(0, 31),
+    "Attack": random.randint(0, 31),
+    "Defense": random.randint(0, 31),
+    "Sp. Atk": random.randint(0, 31),
+    "Sp. Def": random.randint(0, 31),
+    "Speed": random.randint(0, 31)
+    }
+
     # Lag nytt Pokémon-objekt med unik ID, level og timestamp
     new_pokemon = {
         "id": str(uuid.uuid4()),
         "name": name,
         "level": 1,
+        "iv": iv,
         "nature": random.choice(NATURES),
         "caught_at": now.strftime("%Y-%m-%d %H:%M")
     }
