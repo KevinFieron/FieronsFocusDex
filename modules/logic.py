@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import uuid
 from datetime import datetime
 
 DATA_PATH = "data/user_data.json"
@@ -35,16 +36,21 @@ def save_user_data(data):
 def log_task_and_get_pokemon(activity):
     data = load_user_data()
 
+    # Velg Pokémon
     if random.random() < 0.2:
         name = random.choice(RARE_POKEMON)
     else:
         name = random.choice(COMMON_POKEMON)
 
-    new_pokemon = {"name": name, "level": 1}
+    # Lag nytt Pokémon-objekt med unik ID og level
+    new_pokemon = {
+        "id": str(uuid.uuid4()),
+        "name": name,
+        "level": 1
+    }
 
     if "pokemon" not in data:
         data["pokemon"] = []
-
     data["pokemon"].append(new_pokemon)
 
     if "task_log" not in data:
@@ -55,48 +61,47 @@ def log_task_and_get_pokemon(activity):
         "date": now.strftime("%Y-%m-%d"),
         "time": now.strftime("%H:%M"),
         "activity": activity,
-        "pokemon": name  # fortsatt bare navn i loggen
+        "pokemon": new_pokemon
     }
-
     data["task_log"].append(log_entry)
-    save_user_data(data)
-    return name
 
-def transfer_pokemon(name):
+    save_user_data(data)
+    return new_pokemon
+
+def transfer_pokemon(pokemon_id):
     data = load_user_data()
 
     for i, poke in enumerate(data["pokemon"]):
-        if poke["name"] == name:
+        if poke["id"] == pokemon_id:
+            name = poke["name"]
             del data["pokemon"][i]
             break
     else:
-        return False  # Fant ingen Pokémon med det navnet
+        return False  # Fant ingen Pokémon med den ID-en
 
-    # Candy-håndtering skjer kun hvis vi fant og slettet en Pokémon
     if "candy" not in data:
         data["candy"] = {}
     data["candy"][name] = data["candy"].get(name, 0) + 1
     save_user_data(data)
     return True
 
-def level_up_pokemon(pokemon_name, pokemon_index):
+def level_up_pokemon(pokemon_id):
     data = load_user_data()
     pokemon_list = data.get("pokemon", [])
     candy_data = data.get("candy", {})
 
-    if pokemon_index >= len(pokemon_list):
-        return False, "Invalid index"
+    for poke in pokemon_list:
+        if poke["id"] == pokemon_id:
+            pokemon = poke
+            break
+    else:
+        return False, "Pokémon not found"
 
-    pokemon = pokemon_list[pokemon_index]
-
-    if pokemon["name"] != pokemon_name:
-        return False, "Pokémon mismatch"
-
+    name = pokemon["name"]
     level = pokemon.get("level", 1)
     if level >= 100:
         return False, "Already at max level"
 
-    # Bestem candy-kostnad basert på level
     if level < 20:
         cost = 1
     elif level < 40:
@@ -108,13 +113,12 @@ def level_up_pokemon(pokemon_name, pokemon_index):
     else:
         cost = 5
 
-    current_candy = candy_data.get(pokemon_name, 0)
+    current_candy = candy_data.get(name, 0)
     if current_candy < cost:
-        return False, f"Not enough {pokemon_name} candy (need {cost})"
+        return False, f"Not enough {name} candy (need {cost})"
 
-    # Oppdater data
     pokemon["level"] += 1
-    candy_data[pokemon_name] -= cost
+    candy_data[name] -= cost
 
     save_user_data(data)
-    return True, f"{pokemon_name} is now level {pokemon['level']}!"
+    return True, f"{name} is now level {pokemon['level']}!"

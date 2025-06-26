@@ -91,8 +91,9 @@ class FocusDexApp:
         def submit_task():
             activity = current_activity.get()
             pokemon = log_task_and_get_pokemon(activity)
-            tk.messagebox.showinfo("Congratulations!", f"You got a {pokemon} for completing {activity.lower()}!")
+            tk.messagebox.showinfo("Congratulations!", f"You got a {pokemon['name']} for completing {activity.lower()}!")
             task_window.destroy()
+            self.refresh_pokemon_menu()
 
         execute_button = tk.Button(task_window, text="Execute", width=20, command=submit_task)
         execute_button.pack(pady=10)
@@ -134,7 +135,7 @@ class FocusDexApp:
                 tk.Label(scroll_frame, text=header, font=("Helvetica", 12, "bold")).pack(pady=(10, 2))
 
                 for entry in reversed(recent):
-                    text = f"{entry['date']} at {entry['time']} → {entry['pokemon']}"
+                    text = f"{entry['date']} at {entry['time']} → {entry['pokemon']['name']}"
                     tk.Label(scroll_frame, text=text, anchor="w", padx=10).pack(fill="x", pady=1)
 
             display_section("Exercise", exercise_log)
@@ -190,10 +191,12 @@ class FocusDexApp:
 
         for idx, poke in matching_pokemon:
             lvl = poke.get("level", 1)
+            poke_id = poke["id"]
             text = f"{name} Lv {lvl}"
-            def create_level_up_fn(i=idx):
+
+            def create_level_up_fn(pid=poke_id):
                 def level_up_action():
-                    success, msg = level_up_pokemon(name, i)
+                    success, msg = level_up_pokemon(pid)
                     messagebox.showinfo("Level Up", msg)
                     if success:
                         level_window.destroy()
@@ -204,20 +207,27 @@ class FocusDexApp:
             btn = tk.Button(level_window, text=text, command=create_level_up_fn())
             btn.pack(pady=3)
 
-    def open_pokemon_detail(self, name):
+    def open_pokemon_detail(self, poke_id):
+        data = load_user_data()
+        pokemon = next((p for p in data.get("pokemon", []) if p["id"] == poke_id), None)
+
+        if not pokemon:
+            tk.messagebox.showerror("Error", "Pokémon not found.")
+            return
+
         detail_window = tk.Toplevel(self.root)
-        detail_window.title(name)
+        detail_window.title(pokemon["name"])
         detail_window.geometry("250x150")
 
-        label = tk.Label(detail_window, text=f"{name}", font=("Helvetica", 14))
+        label = tk.Label(detail_window, text=f"{pokemon['name']} Lv {pokemon['level']}", font=("Helvetica", 14))
         label.pack(pady=10)
 
         def confirm_transfer():
-            success = transfer_pokemon(name)
+            success = transfer_pokemon(poke_id)
             if success:
-                tk.messagebox.showinfo("Transferred", f"{name} got transferred! You received a {name} candy.")
+                tk.messagebox.showinfo("Transferred", f"{pokemon['name']} got transferred! You received a {pokemon['name']} candy.")
                 detail_window.destroy()
-                self.refresh_pokemon_grid()
+                self.refresh_pokemon_menu()
             else:
                 tk.messagebox.showerror("Error", "Something went wrong.")
 
@@ -232,6 +242,7 @@ class FocusDexApp:
 
         poke_window = tk.Toplevel(self.root)
         self.active_window = poke_window
+        self.pokemon_window = poke_window
         poke_window.protocol("WM_DELETE_WINDOW", lambda: self.set_window_closed(poke_window))
 
         poke_window.title("Your Pokémon")
@@ -240,7 +251,6 @@ class FocusDexApp:
         label = tk.Label(poke_window, text="Your Pokémon-box", font=("Helvetica", 12))
         label.pack(pady=10)
 
-        # Lag canvas + scrollbar
         canvas = tk.Canvas(poke_window, height=300)
         scrollbar = tk.Scrollbar(poke_window, orient="vertical", command=canvas.yview)
         scroll_frame = tk.Frame(canvas)
@@ -259,23 +269,23 @@ class FocusDexApp:
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
-        if not pokemon_list:
-            empty_label = tk.Label(scroll_frame, text="No Pokémon yet!")
-            empty_label.grid(row=0, column=0, pady=10)
-        else:
-            def on_click(poke_name):
-                self.open_pokemon_detail(poke_name)
+        for i, poke in enumerate(pokemon_list):
+            name = poke["name"]
+            level = poke["level"]
+            poke_id = poke["id"]
+            display_text = f"{name} Lv {level}"
+            row = i // 3
+            col = i % 3
 
-            for i, poke in enumerate(pokemon_list):
-                name = poke["name"]
-                level = poke["level"]
-                display_text = f"{name} Lv {level}"
-                row = i // 3  # 3 kolonner per rad
-                col = i % 3
-
-                poke_box = tk.Button(scroll_frame, text=display_text, relief="groove", width=12, height=3,
-                    command=lambda n=name: on_click(n))
-                poke_box.grid(row=row, column=col, padx=5, pady=5)
+            poke_box = tk.Button(
+                scroll_frame,
+                text=display_text,
+                relief="groove",
+                width=12,
+                height=3,
+                command=lambda pid=poke_id: self.open_pokemon_detail(pid)
+            )
+            poke_box.grid(row=row, column=col, padx=5, pady=5)
 
     def refresh_pokemon_grid(self):
         for widget in self.poke_scroll_frame.winfo_children():
