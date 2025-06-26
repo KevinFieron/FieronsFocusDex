@@ -217,10 +217,16 @@ class FocusDexApp:
 
         detail_window = tk.Toplevel(self.root)
         detail_window.title(pokemon["name"])
-        detail_window.geometry("250x150")
+        detail_window.geometry("300x180")
 
         label = tk.Label(detail_window, text=f"{pokemon['name']} Lv {pokemon['level']}", font=("Helvetica", 14))
-        label.pack(pady=10)
+        label.pack(pady=5)
+
+        nature = pokemon.get("nature", "Unknown")
+        tk.Label(detail_window, text=f"Nature: {nature}", font=("Helvetica", 10)).pack(pady=2)
+
+        caught_at = pokemon.get("caught_at", "Unknown")
+        tk.Label(detail_window, text=f"Caught at: {caught_at}", font=("Helvetica", 10)).pack(pady=2)
 
         def confirm_transfer():
             success = transfer_pokemon(poke_id)
@@ -298,12 +304,10 @@ class FocusDexApp:
             empty_label = tk.Label(self.poke_scroll_frame, text="No Pokémon yet!")
             empty_label.grid(row=0, column=0, pady=10)
         else:
-            def on_click(poke_name):
-                self.open_pokemon_detail(poke_name)
-
             for i, poke in enumerate(pokemon_list):
                 name = poke["name"]
                 level = poke.get("level", 1)
+                poke_id = poke["id"]  # <-- Bruk ID som nøkkel
                 display_text = f"{name} Lv {level}"
                 row = i // 3
                 col = i % 3
@@ -313,7 +317,7 @@ class FocusDexApp:
                     relief="groove",
                     width=12,
                     height=3,
-                    command=lambda n=name: on_click(n)
+                    command=lambda pid=poke_id: self.open_pokemon_detail(pid)
                 )
                 poke_box.grid(row=row, column=col, padx=5, pady=5)
 

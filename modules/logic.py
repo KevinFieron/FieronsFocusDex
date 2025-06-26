@@ -12,6 +12,8 @@ RARE_POKEMON = ["Charmander", "Bulbasaur", "Squirtle", "Pikachu", "Eevee"]
 # Vanlige (80 % samlet)
 COMMON_POKEMON = ["Vulpix", "Growlithe", "Ponyta", "Slugma", "Houndour"]
 
+NATURES = ["Modest", "Adamant", "Timid", "Jolly", "Calm", "Careful", "Bold", "Impish"]
+
 def load_user_data():
     if not os.path.exists(DATA_PATH):
         return {"pokemon": [], "task_log": [], "candy": {}}
@@ -42,11 +44,15 @@ def log_task_and_get_pokemon(activity):
     else:
         name = random.choice(COMMON_POKEMON)
 
-    # Lag nytt Pokémon-objekt med unik ID og level
+    now = datetime.now()
+
+    # Lag nytt Pokémon-objekt med unik ID, level og timestamp
     new_pokemon = {
         "id": str(uuid.uuid4()),
         "name": name,
-        "level": 1
+        "level": 1,
+        "nature": random.choice(NATURES),
+        "caught_at": now.strftime("%Y-%m-%d %H:%M")
     }
 
     if "pokemon" not in data:
@@ -56,15 +62,14 @@ def log_task_and_get_pokemon(activity):
     if "task_log" not in data:
         data["task_log"] = []
 
-    now = datetime.now()
     log_entry = {
         "date": now.strftime("%Y-%m-%d"),
         "time": now.strftime("%H:%M"),
         "activity": activity,
         "pokemon": new_pokemon
     }
-    data["task_log"].append(log_entry)
 
+    data["task_log"].append(log_entry)
     save_user_data(data)
     return new_pokemon
 
