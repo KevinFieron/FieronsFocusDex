@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from modules.logic import log_task_and_get_pokemon, load_user_data, transfer_pokemon, level_up_pokemon
 from modules.logic import save_user_data, DATA_PATH
+from modules.pokemon_data import POKEMON_DATABASE
 
 class FocusDexApp:
     def __init__(self):
@@ -217,10 +218,23 @@ class FocusDexApp:
 
         detail_window = tk.Toplevel(self.root)
         detail_window.title(pokemon["name"])
-        detail_window.geometry("300x300")
+        detail_window.geometry("300x330")
 
-        label = tk.Label(detail_window, text=f"{pokemon['name']} Lv {pokemon['level']}", font=("Helvetica", 14))
-        label.pack(pady=5)
+        header = tk.Frame(detail_window)
+        header.pack(pady=5)
+
+        name_lbl = tk.Label(header, text=f"{pokemon['name']} Lv {pokemon['level']}", font=("Helvetica", 14))
+        name_lbl.pack(side="left")
+
+        # Pokedex-nummer
+        dex_num = POKEMON_DATABASE.get(pokemon["name"], {}).get("dex")
+        if dex_num:
+            tk.Label(detail_window, text=f"#{dex_num}", font=("Helvetica", 10)).pack(pady=(0, 5))
+
+        if pokemon.get("gender") == "Male":
+            tk.Label(header, text="♂", fg="blue", font=("Helvetica", 14, "bold")).pack(side="left", padx=5)
+        elif pokemon.get("gender") == "Female":
+            tk.Label(header, text="♀", fg="red", font=("Helvetica", 14, "bold")).pack(side="left", padx=5)
 
         ivs = pokemon.get("iv", {})
         stats = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]
@@ -229,8 +243,20 @@ class FocusDexApp:
         table = tk.Frame(detail_window)
         table.pack(pady=5)
         for i, stat in enumerate(stats):
+            value = ivs.get(stat, 0)
             tk.Label(table, text=stat, width=10, anchor="w").grid(row=i, column=0)
-            tk.Label(table, text=str(ivs.get(stat, 0)), width=10, anchor="e").grid(row=i, column=1)
+
+            if value == 0:
+                color = "red"
+                font = ("Helvetica", 10)
+            elif value == 31:
+                color = "green"
+                font = ("Helvetica", 10, "bold")
+            else:
+                color = "black"
+                font = ("Helvetica", 10)
+
+            tk.Label(table, text=str(value), width=10, anchor="e", fg=color, font=font).grid(row=i, column=1)
 
         tk.Label(table, text="Total", width=10, anchor="w", font=("Helvetica", 10, "bold")).grid(row=6, column=0)
         tk.Label(table, text=f"{total} / 186", width=10, anchor="e", font=("Helvetica", 10, "bold")).grid(row=6, column=1)
@@ -292,7 +318,17 @@ class FocusDexApp:
             name = poke["name"]
             level = poke["level"]
             poke_id = poke["id"]
-            display_text = f"{name} Lv {level}"
+            gender = poke.get("gender", "")
+            gender_symbol = ""
+            color = "black"
+            if gender == "Male":
+                gender_symbol = "♂"
+                color = "blue"
+            elif gender == "Female":
+                gender_symbol = "♀"
+                color = "red"
+
+            display_text = f"{name} Lv {level} {gender_symbol}"
             row = i // 3
             col = i % 3
 
@@ -302,6 +338,7 @@ class FocusDexApp:
                 relief="groove",
                 width=12,
                 height=3,
+                fg=color,
                 command=lambda pid=poke_id: self.open_pokemon_detail(pid)
             )
             poke_box.grid(row=row, column=col, padx=5, pady=5)

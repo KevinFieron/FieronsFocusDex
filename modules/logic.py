@@ -3,14 +3,9 @@ import os
 import random
 import uuid
 from datetime import datetime
+from modules.pokemon_data import POKEMON_DATABASE
 
 DATA_PATH = "data/user_data.json"
-
-# Sjeldne (20 % samlet)
-RARE_POKEMON = ["Charmander", "Bulbasaur", "Squirtle", "Pikachu", "Eevee"]
-
-# Vanlige (80 % samlet)
-COMMON_POKEMON = ["Vulpix", "Growlithe", "Ponyta", "Slugma", "Houndour"]
 
 NATURES = ["Modest", "Adamant", "Timid", "Jolly", "Calm", "Careful", "Bold", "Impish"]
 
@@ -35,15 +30,15 @@ def save_user_data(data):
     with open(DATA_PATH, "w") as f:
         json.dump(data, f, indent=4)
 
+def get_random_pokemon_name():
+    rare = [name for name, data in POKEMON_DATABASE.items() if data["rarity"] == "rare"]
+    common = [name for name, data in POKEMON_DATABASE.items() if data["rarity"] == "common"]
+    return random.choice(rare) if random.random() < 0.2 else random.choice(common)
+
 def log_task_and_get_pokemon(activity):
     data = load_user_data()
 
-    # Velg Pokémon
-    if random.random() < 0.2:
-        name = random.choice(RARE_POKEMON)
-    else:
-        name = random.choice(COMMON_POKEMON)
-
+    name = get_random_pokemon_name()
     now = datetime.now()
 
     iv = {
@@ -55,14 +50,17 @@ def log_task_and_get_pokemon(activity):
     "Speed": random.randint(0, 31)
     }
 
+    gender = assign_gender(name)
+
     # Lag nytt Pokémon-objekt med unik ID, level og timestamp
     new_pokemon = {
         "id": str(uuid.uuid4()),
         "name": name,
         "level": 1,
-        "iv": iv,
         "nature": random.choice(NATURES),
-        "caught_at": now.strftime("%Y-%m-%d %H:%M")
+        "iv": iv,
+        "caught_at": now.strftime("%Y-%m-%d %H:%M"),
+        "gender": gender
     }
 
     if "pokemon" not in data:
@@ -82,6 +80,27 @@ def log_task_and_get_pokemon(activity):
     data["task_log"].append(log_entry)
     save_user_data(data)
     return new_pokemon
+
+def assign_gender(name):
+    from modules.pokemon_data import POKEMON_DATABASE
+    group = POKEMON_DATABASE.get(name, {}).get("gender_ratio", "B")  # Default til "B"
+
+    roll = random.random()
+
+    if group == "A":  # 87.5% Male
+        return "Male" if roll < 0.875 else "Female"
+    elif group == "B":  # 50/50
+        return "Male" if roll < 0.5 else "Female"
+    elif group == "C":  # 25% Male
+        return "Male" if roll < 0.25 else "Female"
+    elif group == "D":  # 75% Male
+        return "Male" if roll < 0.75 else "Female"
+    elif group == "E":  # 12.5% Male
+        return "Male" if roll < 0.125 else "Female"
+    elif group == "genderless":
+        return "Genderless"
+    else:
+        return "Male" if roll < 0.5 else "Female"  # Default fallback
 
 def transfer_pokemon(pokemon_id):
     data = load_user_data()
