@@ -156,3 +156,24 @@ def level_up_pokemon(pokemon_id):
 
     save_user_data(data)
     return True, f"{name} is now level {pokemon['level']}!"
+
+import shutil
+
+SAVES_DIR = "saves"
+
+def save_current_data(save_name):
+    os.makedirs(SAVES_DIR, exist_ok=True)
+    target_path = os.path.join(SAVES_DIR, f"{save_name}.json")
+    shutil.copy(DATA_PATH, target_path)
+
+def load_saved_data(save_name):
+    target_path = os.path.join(SAVES_DIR, f"{save_name}.json")
+    if os.path.exists(target_path):
+        shutil.copy(target_path, DATA_PATH)
+        return True
+    return False
+
+def list_saves():
+    if not os.path.exists(SAVES_DIR):
+        return []
+    return [f[:-5] for f in os.listdir(SAVES_DIR) if f.endswith(".json")]

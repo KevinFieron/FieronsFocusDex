@@ -4,6 +4,10 @@ from modules.logic import log_task_and_get_pokemon, load_user_data, transfer_pok
 from modules.logic import save_user_data, DATA_PATH
 from modules.pokemon_data import POKEMON_DATABASE
 
+import os
+import shutil
+from tkinter import simpledialog
+
 class FocusDexApp:
     def __init__(self):
         self.root = tk.Tk()
@@ -379,7 +383,7 @@ class FocusDexApp:
         options_window.protocol("WM_DELETE_WINDOW", lambda: self.set_window_closed(options_window))
 
         options_window.title("Options")
-        options_window.geometry("300x200")
+        options_window.geometry("300x250")
 
         label = tk.Label(options_window, text="Options", font=("Helvetica", 14, "bold"))
         label.pack(pady=20)
@@ -394,6 +398,52 @@ class FocusDexApp:
 
         reset_button = tk.Button(options_window, text="Reset all data", fg="red", command=reset_all_data)
         reset_button.pack(pady=10)
-     
+
+        save_button = tk.Button(options_window, text="Save current progress", command=self.save_progress)
+        save_button.pack(pady=5)
+
+        load_button = tk.Button(options_window, text="Load saved progress", command=self.load_progress)
+        load_button.pack(pady=5)
+
+    def save_progress(self):
+        save_name = simpledialog.askstring("Save Progress", "Enter a name for your save file:")
+        if not save_name:
+            return
+
+        save_name = save_name.strip().replace(" ", "_")
+        save_path = os.path.join("saves", f"{save_name}.json")
+
+        try:
+            shutil.copyfile(DATA_PATH, save_path)
+            tk.messagebox.showinfo("Success", f"Progress saved as '{save_name}'!")
+        except Exception as e:
+            tk.messagebox.showerror("Error", f"Failed to save progress: {str(e)}")
+
+    def load_progress(self):
+        save_files = [f for f in os.listdir("saves") if f.endswith(".json")]
+        if not save_files:
+            tk.messagebox.showinfo("No Saves", "No saved files found.")
+            return
+
+        load_window = tk.Toplevel(self.root)
+        load_window.title("Load Save")
+        load_window.geometry("300x250")
+
+        tk.Label(load_window, text="Select a save to load:", font=("Helvetica", 12)).pack(pady=10)
+
+        for save_file in save_files:
+            def load_selected(file=save_file):
+                try:
+                    src_path = os.path.join("saves", file)
+                    with open(src_path, "r") as src, open(DATA_PATH, "w") as dst:
+                        dst.write(src.read())
+                    tk.messagebox.showinfo("Loaded", f"Loaded save: {file}")
+                    load_window.destroy()
+                except Exception as e:
+                    tk.messagebox.showerror("Error", f"Failed to load save: {str(e)}")
+
+            btn = tk.Button(load_window, text=save_file.replace(".json", ""), command=load_selected)
+            btn.pack(pady=3)
+
     def run(self):
         self.root.mainloop()

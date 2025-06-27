@@ -1,0 +1,289 @@
+{
+    "pokemon": [
+        {
+            "id": "8e473f7f-80ff-49cf-a113-a23017fecece",
+            "name": "Houndour",
+            "level": 1,
+            "nature": "Timid",
+            "iv": {
+                "HP": 2,
+                "Attack": 24,
+                "Defense": 6,
+                "Sp. Atk": 17,
+                "Sp. Def": 7,
+                "Speed": 17
+            },
+            "caught_at": "2025-06-27 02:28",
+            "gender": "Female"
+        },
+        {
+            "id": "3926248c-2b33-45f1-a25b-128a2c6602df",
+            "name": "Vulpix",
+            "level": 1,
+            "nature": "Jolly",
+            "iv": {
+                "HP": 27,
+                "Attack": 23,
+                "Defense": 24,
+                "Sp. Atk": 10,
+                "Sp. Def": 9,
+                "Speed": 22
+            },
+            "caught_at": "2025-06-27 02:28",
+            "gender": "Female"
+        },
+        {
+            "id": "29300c76-39a1-4aab-a9ee-6c62b8313e33",
+            "name": "Tepig",
+            "level": 1,
+            "nature": "Modest",
+            "iv": {
+                "HP": 17,
+                "Attack": 4,
+                "Defense": 1,
+                "Sp. Atk": 31,
+                "Sp. Def": 11,
+                "Speed": 26
+            },
+            "caught_at": "2025-06-27 02:28",
+            "gender": "Female"
+        },
+        {
+            "id": "12f04493-fcd3-4cfc-a7e3-2a6f9e9a4f2c",
+            "name": "Sizzlipede",
+            "level": 2,
+            "nature": "Adamant",
+            "iv": {
+                "HP": 24,
+                "Attack": 22,
+                "Defense": 28,
+                "Sp. Atk": 27,
+                "Sp. Def": 9,
+                "Speed": 31
+            },
+            "caught_at": "2025-06-27 02:28",
+            "gender": "Female"
+        },
+        {
+            "id": "b6f6d971-58cb-4992-9710-1ecf3ed6acc2",
+            "name": "Growlithe",
+            "level": 1,
+            "nature": "Modest",
+            "iv": {
+                "HP": 28,
+                "Attack": 11,
+                "Defense": 4,
+                "Sp. Atk": 26,
+                "Sp. Def": 23,
+                "Speed": 18
+            },
+            "caught_at": "2025-06-27 02:28",
+            "gender": "Male"
+        },
+        {
+            "id": "9354203a-e25c-4abd-b36c-d307c105c63d",
+            "name": "Heatmor",
+            "level": 1,
+            "nature": "Jolly",
+            "iv": {
+                "HP": 10,
+                "Attack": 26,
+                "Defense": 8,
+                "Sp. Atk": 13,
+                "Sp. Def": 28,
+                "Speed": 25
+            },
+            "caught_at": "2025-06-27 02:29",
+            "gender": "Male"
+        },
+        {
+            "id": "c606b323-f2c9-40fe-845a-73f8f0a6bd24",
+            "name": "Rolycoly",
+            "level": 1,
+            "nature": "Impish",
+            "iv": {
+                "HP": 1,
+                "Attack": 21,
+                "Defense": 16,
+                "Sp. Atk": 14,
+                "Sp. Def": 0,
+                "Speed": 0
+            },
+            "caught_at": "2025-06-27 02:29",
+            "gender": "Female"
+        }
+    ],
+    "task_log": [
+        {
+            "date": "2025-06-27",
+            "time": "02:28",
+            "activity": "Work",
+            "pokemon": {
+                "id": "8e473f7f-80ff-49cf-a113-a23017fecece",
+                "name": "Houndour",
+                "level": 1,
+                "nature": "Timid",
+                "iv": {
+                    "HP": 2,
+                    "Attack": 24,
+                    "Defense": 6,
+                    "Sp. Atk": 17,
+                    "Sp. Def": 7,
+                    "Speed": 17
+                },
+                "caught_at": "2025-06-27 02:28",
+                "gender": "Female"
+            }
+        },
+        {
+            "date": "2025-06-27",
+            "time": "02:28",
+            "activity": "Work",
+            "pokemon": {
+                "id": "ed863377-1738-44cd-8737-7aab2a373e7a",
+                "name": "Sizzlipede",
+                "level": 1,
+                "nature": "Impish",
+                "iv": {
+                    "HP": 13,
+                    "Attack": 7,
+                    "Defense": 4,
+                    "Sp. Atk": 31,
+                    "Sp. Def": 10,
+                    "Speed": 26
+                },
+                "caught_at": "2025-06-27 02:28",
+                "gender": "Female"
+            }
+        },
+        {
+            "date": "2025-06-27",
+            "time": "02:28",
+            "activity": "Work",
+            "pokemon": {
+                "id": "3926248c-2b33-45f1-a25b-128a2c6602df",
+                "name": "Vulpix",
+                "level": 1,
+                "nature": "Jolly",
+                "iv": {
+                    "HP": 27,
+                    "Attack": 23,
+                    "Defense": 24,
+                    "Sp. Atk": 10,
+                    "Sp. Def": 9,
+                    "Speed": 22
+                },
+                "caught_at": "2025-06-27 02:28",
+                "gender": "Female"
+            }
+        },
+        {
+            "date": "2025-06-27",
+            "time": "02:28",
+            "activity": "Work",
+            "pokemon": {
+                "id": "29300c76-39a1-4aab-a9ee-6c62b8313e33",
+                "name": "Tepig",
+                "level": 1,
+                "nature": "Modest",
+                "iv": {
+                    "HP": 17,
+                    "Attack": 4,
+                    "Defense": 1,
+                    "Sp. Atk": 31,
+                    "Sp. Def": 11,
+                    "Speed": 26
+                },
+                "caught_at": "2025-06-27 02:28",
+                "gender": "Female"
+            }
+        },
+        {
+            "date": "2025-06-27",
+            "time": "02:28",
+            "activity": "Work",
+            "pokemon": {
+                "id": "12f04493-fcd3-4cfc-a7e3-2a6f9e9a4f2c",
+                "name": "Sizzlipede",
+                "level": 1,
+                "nature": "Adamant",
+                "iv": {
+                    "HP": 24,
+                    "Attack": 22,
+                    "Defense": 28,
+                    "Sp. Atk": 27,
+                    "Sp. Def": 9,
+                    "Speed": 31
+                },
+                "caught_at": "2025-06-27 02:28",
+                "gender": "Female"
+            }
+        },
+        {
+            "date": "2025-06-27",
+            "time": "02:28",
+            "activity": "Work",
+            "pokemon": {
+                "id": "b6f6d971-58cb-4992-9710-1ecf3ed6acc2",
+                "name": "Growlithe",
+                "level": 1,
+                "nature": "Modest",
+                "iv": {
+                    "HP": 28,
+                    "Attack": 11,
+                    "Defense": 4,
+                    "Sp. Atk": 26,
+                    "Sp. Def": 23,
+                    "Speed": 18
+                },
+                "caught_at": "2025-06-27 02:28",
+                "gender": "Male"
+            }
+        },
+        {
+            "date": "2025-06-27",
+            "time": "02:29",
+            "activity": "Work",
+            "pokemon": {
+                "id": "9354203a-e25c-4abd-b36c-d307c105c63d",
+                "name": "Heatmor",
+                "level": 1,
+                "nature": "Jolly",
+                "iv": {
+                    "HP": 10,
+                    "Attack": 26,
+                    "Defense": 8,
+                    "Sp. Atk": 13,
+                    "Sp. Def": 28,
+                    "Speed": 25
+                },
+                "caught_at": "2025-06-27 02:29",
+                "gender": "Male"
+            }
+        },
+        {
+            "date": "2025-06-27",
+            "time": "02:29",
+            "activity": "Work",
+            "pokemon": {
+                "id": "c606b323-f2c9-40fe-845a-73f8f0a6bd24",
+                "name": "Rolycoly",
+                "level": 1,
+                "nature": "Impish",
+                "iv": {
+                    "HP": 1,
+                    "Attack": 21,
+                    "Defense": 16,
+                    "Sp. Atk": 14,
+                    "Sp. Def": 0,
+                    "Speed": 0
+                },
+                "caught_at": "2025-06-27 02:29",
+                "gender": "Female"
+            }
+        }
+    ],
+    "candy": {
+        "Sizzlipede": 0
+    }
+}
