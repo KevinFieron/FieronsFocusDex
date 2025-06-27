@@ -7,7 +7,7 @@ from modules.pokemon_data import POKEMON_DATABASE
 
 DATA_PATH = "data/user_data.json"
 
-NATURES = ["Modest", "Adamant", "Timid", "Jolly", "Calm", "Careful", "Bold", "Impish"]
+NATURES = ["Modest", "Adamant", "Timid", "Jolly", "Calm", "Careful", "Bold", "Impish", "Brave", "Relaxed", "Quiet", "Sassy", "Hasty", "Naive"]
 
 def load_user_data():
     if not os.path.exists(DATA_PATH):
@@ -31,9 +31,28 @@ def save_user_data(data):
         json.dump(data, f, indent=4)
 
 def get_random_pokemon_name():
-    rare = [name for name, data in POKEMON_DATABASE.items() if data["rarity"] == "rare"]
-    common = [name for name, data in POKEMON_DATABASE.items() if data["rarity"] == "common"]
-    return random.choice(rare) if random.random() < 0.2 else random.choice(common)
+    from modules.pokemon_data import POKEMON_DATABASE
+
+    rarity_pool = {
+        "common": [],
+        "rare": [],
+        "legendary": []
+    }
+
+    for name, props in POKEMON_DATABASE.items():
+        rarity = props.get("rarity", "common")
+        if rarity in rarity_pool:
+            rarity_pool[rarity].append(name)
+
+    rand = random.random()
+    if rand < 0.01:
+        rarity = "legendary"
+    elif rand < 0.11:
+        rarity = "rare"
+    else:
+        rarity = "common"
+
+    return random.choice(rarity_pool[rarity])
 
 def log_task_and_get_pokemon(activity):
     data = load_user_data()
@@ -52,6 +71,8 @@ def log_task_and_get_pokemon(activity):
 
     gender = assign_gender(name)
 
+    is_shiny = random.random() < 0.001  # 0.1% shiny-sjanse
+
     # Lag nytt Pokémon-objekt med unik ID, level og timestamp
     new_pokemon = {
         "id": str(uuid.uuid4()),
@@ -60,7 +81,8 @@ def log_task_and_get_pokemon(activity):
         "nature": random.choice(NATURES),
         "iv": iv,
         "caught_at": now.strftime("%Y-%m-%d %H:%M"),
-        "gender": gender
+        "gender": gender,
+        "shiny": is_shiny
     }
 
     if "pokemon" not in data:

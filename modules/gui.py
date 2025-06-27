@@ -96,7 +96,17 @@ class FocusDexApp:
         def submit_task():
             activity = current_activity.get()
             pokemon = log_task_and_get_pokemon(activity)
-            tk.messagebox.showinfo("Congratulations!", f"You got a {pokemon['name']} for completing {activity.lower()}!")
+
+            is_shiny = pokemon.get("shiny", False)
+            name = pokemon["name"]
+
+            if is_shiny:
+                msg = f"★ Congratulations! You just caught a SHINY {name}!"
+                tk.messagebox.showinfo("SHINY Pokémon!", msg)
+            else:
+                msg = f"You caught a {name}!"
+                tk.messagebox.showinfo("Congratulations!", msg)
+
             task_window.destroy()
             self.refresh_pokemon_menu()
 
@@ -229,6 +239,8 @@ class FocusDexApp:
 
         name_lbl = tk.Label(header, text=f"{pokemon['name']} Lv {pokemon['level']}", font=("Helvetica", 14))
         name_lbl.pack(side="left")
+        if pokemon.get("shiny"):
+            tk.Label(header, text="★", fg="gold", font=("Helvetica", 14, "bold")).pack(side="left", padx=5)
 
         # Pokedex-nummer
         dex_num = POKEMON_DATABASE.get(pokemon["name"], {}).get("dex")
@@ -332,7 +344,9 @@ class FocusDexApp:
                 gender_symbol = "♀"
                 color = "red"
 
-            display_text = f"{name} Lv {level} {gender_symbol}"
+            is_shiny = poke.get("shiny", False)
+            shiny_star = "★ " if is_shiny else ""
+            display_text = f"{shiny_star}{name} Lv {level} {gender_symbol}"
             row = i // 3
             col = i % 3
 
@@ -342,9 +356,10 @@ class FocusDexApp:
                 relief="groove",
                 width=12,
                 height=3,
-                fg=color,
+                fg="gold" if is_shiny else color,
                 command=lambda pid=poke_id: self.open_pokemon_detail(pid)
             )
+
             poke_box.grid(row=row, column=col, padx=5, pady=5)
 
     def refresh_pokemon_grid(self):

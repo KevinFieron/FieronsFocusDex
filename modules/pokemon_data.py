@@ -36,10 +36,20 @@ POKEMON_DATABASE = {
         "gender_ratio": "B",
         "dex": 77
     },
+    "Ditto": {
+        "rarity": "common",
+        "gender_ratio": "genderless",
+        "dex": 132
+    },
     "Eevee": {
         "rarity": "rare",
         "gender_ratio": "A",
         "dex": 133
+    },
+    "Moltres": {
+        "rarity": "legendary",
+        "gender_ratio": "genderless",
+        "dex": 146
     },
     "Chikorita": {
         "rarity": "rare",
@@ -70,6 +80,16 @@ POKEMON_DATABASE = {
         "rarity": "common",
         "gender_ratio": "D",
         "dex": 240
+    },
+    "Entei": {
+        "rarity": "legendary",
+        "gender_ratio": "genderless",
+        "dex": 244
+    },
+    "Ho-Oh": {
+        "rarity": "legendary",
+        "gender_ratio": "genderless",
+        "dex": 250
     },
     "Treecko": {
         "rarity": "rare",
@@ -111,6 +131,16 @@ POKEMON_DATABASE = {
         "gender_ratio": "A",
         "dex": 393
     }, 
+    "Heatran": {
+        "rarity": "legendary",
+        "gender_ratio": "B",
+        "dex": 485
+    },
+    "Victini": {
+        "rarity": "legendary",
+        "gender_ratio": "genderless",
+        "dex": 494
+    },
     "Snivy": {
         "rarity": "rare",
         "gender_ratio": "A",
@@ -151,6 +181,11 @@ POKEMON_DATABASE = {
         "gender_ratio": "B",
         "dex": 636
     },
+    "Reshiram": {
+        "rarity": "legendary",
+        "gender_ratio": "genderless",
+        "dex": 643
+    },
     "Fennekin": {
         "rarity": "rare",
         "gender_ratio": "A",
@@ -166,6 +201,11 @@ POKEMON_DATABASE = {
         "gender_ratio": "E",
         "dex": 667
     },
+    "Volcanion": {
+        "rarity": "legendary",
+        "gender_ratio": "genderless",
+        "dex": 721
+    },
     "Litten": {
         "rarity": "rare",
         "gender_ratio": "A",
@@ -180,6 +220,11 @@ POKEMON_DATABASE = {
         "rarity": "rare",
         "gender_ratio": "B",
         "dex": 776
+    },
+    "Blacephalon": {
+        "rarity": "legendary",
+        "gender_ratio": "genderless",
+        "dex": 806
     },
     "Scorbunny": {
         "rarity": "rare",
@@ -211,4 +256,19 @@ POKEMON_DATABASE = {
         "gender_ratio": "B",
         "dex": 951
     },
+    "Iron Moth": {
+        "rarity": "legendary",
+        "gender_ratio": "genderless",
+        "dex": 994
+    },
+    "Chi-Yu": {
+        "rarity": "legendary",
+        "gender_ratio": "genderless",
+        "dex": 1004
+    },
+    "Gouging Fire": {
+        "rarity": "legendary",
+        "gender_ratio": "genderless",
+        "dex": 1020
+    }
 }
