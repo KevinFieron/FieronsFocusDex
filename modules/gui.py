@@ -169,7 +169,14 @@ class FocusDexApp:
                 tk.Label(scroll_frame, text=header, font=("Helvetica", 12, "bold")).pack(pady=(10, 2))
 
                 for entry in reversed(recent):
-                    text = f"{entry['date']} at {entry['time']} → {entry['pokemon']['name']}"
+                    if "pokemon" in entry and entry["pokemon"]:
+                        name = entry["pokemon"]["name"]
+                        text = f"{entry['date']} at {entry['time']} → {name}"
+                    elif "item" in entry:
+                        text = f"{entry['date']} at {entry['time']} → Found item: {entry['item']}"
+                    else:
+                        text = f"{entry['date']} at {entry['time']} → Unknown result"
+
                     tk.Label(scroll_frame, text=text, anchor="w", padx=10).pack(fill="x", pady=1)
 
             display_section("Exercise", exercise_log)
