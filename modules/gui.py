@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
 from modules.logic import log_task_and_get_pokemon, load_user_data, transfer_pokemon, level_up_pokemon
-from modules.logic import save_user_data, DATA_PATH
+from modules.logic import save_user_data, DATA_PATH, log_task_and_get_item
 from modules.pokemon_data import POKEMON_DATABASE
+from modules.items_data import ITEMS_DATABASE
 
 import os
 import shutil
@@ -49,6 +50,12 @@ class FocusDexApp:
         candies_button = tk.Button(self.root, text="Candies", width=20, command=self.open_candy_menu)
         candies_button.pack(pady=5)
 
+        items_button = tk.Button(self.root, text="Items", width=20, command=self.open_items_menu)
+        items_button.pack(pady=5) 
+
+        breeding_button = tk.Button(self.root, text="Breeding", width=20, command=self.open_breeding_menu)
+        breeding_button.pack(pady=5)
+
         options_button = tk.Button(self.root, text="Options", width=20, command=self.open_options_menu)
         options_button.pack(pady=5)
 
@@ -73,7 +80,7 @@ class FocusDexApp:
             if activity == "Exercise":
                 exercise_btn.config(relief="sunken", bg="lightblue")
                 work_btn.config(relief="raised", bg="SystemButtonFace")
-                description_label.config(text="One set of exercise = One Pokémon caught")
+                description_label.config(text="One Pokémon caught (80%) or one item found (20%)")
             else:
                 work_btn.config(relief="sunken", bg="lightblue")
                 exercise_btn.config(relief="raised", bg="SystemButtonFace")
@@ -88,24 +95,36 @@ class FocusDexApp:
         work_btn.grid(row=0, column=1, padx=10)
 
         # --- Beskrivelse ---
-        description_label = tk.Label(task_window, text="One set of exercise = One Pokémon caught",
+        description_label = tk.Label(task_window, text="One Pokémon caught (80%) or one item found (20%)",
                                     font=("Helvetica", 10), wraplength=300)
         description_label.pack(pady=10)
 
         # --- Utfør-knapp ---
         def submit_task():
             activity = current_activity.get()
-            pokemon = log_task_and_get_pokemon(activity)
 
-            is_shiny = pokemon.get("shiny", False)
-            name = pokemon["name"]
-
-            if is_shiny:
-                msg = f"★ Congratulations! You just caught a SHINY {name}!"
-                tk.messagebox.showinfo("SHINY Pokémon!", msg)
+            if activity == "Exercise":
+                import random
+                if random.random() < 0.2:
+                    item = log_task_and_get_item("Exercise")
+                    messagebox.showinfo("Nice!", f"You found a {item} from exercise!")
+                else:
+                    pokemon = log_task_and_get_pokemon("Exercise")
+                    is_shiny = pokemon.get("shiny", False)
+                    name = pokemon["name"]
+                    if is_shiny:
+                        messagebox.showinfo("Congratulations!", f"★ Congratulations! You just caught a SHINY {name}!", parent=task_window)
+                    else:
+                        messagebox.showinfo("Nice!", f"You caught a {name}!")
+                    self.refresh_pokemon_menu()
             else:
-                msg = f"You caught a {name}!"
-                tk.messagebox.showinfo("Congratulations!", msg)
+                pokemon = log_task_and_get_pokemon("Work")
+                is_shiny = pokemon.get("shiny", False)
+                name = pokemon["name"]
+                if is_shiny:
+                    messagebox.showinfo("Congratulations!", f"★ Congratulations! You just caught a SHINY {name}!", parent=task_window)
+                else:
+                    messagebox.showinfo("Nice!", f"You caught a {name}!")
 
             task_window.destroy()
             self.refresh_pokemon_menu()
@@ -389,6 +408,40 @@ class FocusDexApp:
                     command=lambda pid=poke_id: self.open_pokemon_detail(pid)
                 )
                 poke_box.grid(row=row, column=col, padx=5, pady=5)
+
+    def open_items_menu(self):
+        self.close_active_window()
+        item_window = tk.Toplevel(self.root)
+        self.active_window = item_window
+        item_window.title("Your Items")
+        item_window.geometry("400x350")
+
+        label = tk.Label(item_window, text="Your Items", font=("Helvetica", 12))
+        label.pack(pady=10)
+
+        data = load_user_data()
+        user_items = data.get("items", {})
+
+        for item_name, item_info in ITEMS_DATABASE.items():
+            count = user_items.get(item_name, 0)
+            frame = tk.Frame(item_window)
+            frame.pack(pady=3, padx=10, fill="x")
+
+            tk.Label(frame, text=f"{item_name} ({count})", anchor="w").pack(side="left")
+            tk.Label(frame, text=item_info.get("description", ""), anchor="e", fg="gray").pack(side="right")
+
+    def open_breeding_menu(self):
+        self.close_active_window()
+
+        breeding_window = tk.Toplevel(self.root)
+        self.active_window = breeding_window
+        breeding_window.protocol("WM_DELETE_WINDOW", lambda: self.set_window_closed(breeding_window))
+
+        breeding_window.title("Breeding")
+        breeding_window.geometry("300x200")
+
+        label = tk.Label(breeding_window, text="Breeding Center (coming soon!)", font=("Helvetica", 12))
+        label.pack(pady=40)
 
     def open_options_menu(self):
         self.close_active_window()

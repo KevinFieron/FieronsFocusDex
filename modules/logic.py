@@ -4,6 +4,8 @@ import random
 import uuid
 from datetime import datetime
 from modules.pokemon_data import POKEMON_DATABASE
+from modules.items_data import ITEMS_DATABASE, get_random_item_name
+
 
 DATA_PATH = "data/user_data.json"
 
@@ -102,6 +104,33 @@ def log_task_and_get_pokemon(activity):
     data["task_log"].append(log_entry)
     save_user_data(data)
     return new_pokemon
+
+def log_task_and_get_item(activity):
+    data = load_user_data()
+
+    # Velg tilfeldig item via funksjonen
+    item = get_random_item_name()
+
+    # Oppdater brukerens item-beholdning
+    if "items" not in data:
+        data["items"] = {}
+    data["items"][item] = data["items"].get(item, 0) + 1
+
+    # Logg aktivitet
+    now = datetime.now()
+    log_entry = {
+        "date": now.strftime("%Y-%m-%d"),
+        "time": now.strftime("%H:%M"),
+        "activity": activity,
+        "item": item
+    }
+
+    if "task_log" not in data:
+        data["task_log"] = []
+    data["task_log"].append(log_entry)
+
+    save_user_data(data)
+    return item
 
 def assign_gender(name):
     from modules.pokemon_data import POKEMON_DATABASE
